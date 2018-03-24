@@ -1,4 +1,4 @@
-package io.git.movies.popularmovies;
+package io.git.movies.popularmovies.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +8,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.pojos.MovieDetails;
+import io.git.movies.popularmovies.utils.URLBuilder;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -24,7 +26,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void populateMovieDetailsOnUI() {
         URLBuilder urlBuilder = new URLBuilder();
-        MovieDetails details = (MovieDetails) getIntent().getSerializableExtra("MOVIE_DATA");
+        MovieDetails details = getIntent().getExtras().getParcelable("MOVIE_DATA");
 
         TextView titleTV = findViewById(R.id.titleTV);
         TextView overviewTV = findViewById(R.id.plotTV);

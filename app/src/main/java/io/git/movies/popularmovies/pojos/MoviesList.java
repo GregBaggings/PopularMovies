@@ -1,11 +1,13 @@
 package io.git.movies.popularmovies.pojos;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class MoviesList implements Serializable {
+public class MoviesList implements Parcelable {
     @SerializedName("page")
     private int page;
     @SerializedName("total_results")
@@ -14,6 +16,25 @@ public class MoviesList implements Serializable {
     private int totalPages;
     @SerializedName("results")
     private List<MovieDetails> resultsList;
+
+    private MoviesList(Parcel in) {
+        page = in.readInt();
+        totalResults = in.readInt();
+        totalPages = in.readInt();
+        resultsList = in.createTypedArrayList(MovieDetails.CREATOR);
+    }
+
+    public static final Creator<MoviesList> CREATOR = new Creator<MoviesList>() {
+        @Override
+        public MoviesList createFromParcel(Parcel in) {
+            return new MoviesList(in);
+        }
+
+        @Override
+        public MoviesList[] newArray(int size) {
+            return new MoviesList[size];
+        }
+    };
 
     public int getPage() {
         return page;
@@ -45,5 +66,18 @@ public class MoviesList implements Serializable {
 
     public void setResultsList(List<MovieDetails> resultsList) {
         this.resultsList = resultsList;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(page);
+        parcel.writeInt(totalResults);
+        parcel.writeInt(totalPages);
+        parcel.writeTypedList(resultsList);
     }
 }

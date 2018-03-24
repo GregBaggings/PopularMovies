@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DetailsActivity">
+    tools:context=".activities.DetailsActivity">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,7 +13,7 @@
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context="io.git.movies.popularmovies.DetailsActivity">
+        tools:context="io.git.movies.popularmovies.activities.DetailsActivity">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appBarLayout"
@@ -37,9 +37,11 @@
             android:id="@+id/titleTV"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="20dp"
             android:text="@string/title_tv_default"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/posterIV"
             app:layout_constraintTop_toTopOf="@+id/posterIV" />
 
@@ -47,8 +49,8 @@
             android:id="@+id/releaseDateTV"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
             android:text="@string/release_date_tv_default"
             app:layout_constraintStart_toEndOf="@+id/posterIV"
             app:layout_constraintTop_toBottomOf="@+id/titleTV" />
@@ -57,9 +59,11 @@
             android:id="@+id/avgTV"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="15dp"
             android:text="@string/avg_tv_default"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/posterIV"
             app:layout_constraintTop_toBottomOf="@+id/releaseDateTV" />
 

@@ -1,7 +1,8 @@
-package io.git.movies.popularmovies;
+package io.git.movies.popularmovies.activities;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,23 +12,27 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.git.movies.popularmovies.R;
+import io.git.movies.popularmovies.adapter.PosterAdapter;
 import io.git.movies.popularmovies.pojos.MovieDetails;
 import io.git.movies.popularmovies.pojos.MoviesList;
+import io.git.movies.popularmovies.rest.AsyncEventListener;
+import io.git.movies.popularmovies.rest.AsyncRequestHandler;
 import io.git.movies.popularmovies.rest.MoviesAPI;
 import io.git.movies.popularmovies.rest.MoviesAPIInterface;
 import retrofit2.Call;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    PosterAdapter adapter;
-    GridView gridView;
-    List<MovieDetails> list = new ArrayList<>();
-    MoviesAPIInterface service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
+    private PosterAdapter adapter;
+    private GridView gridView;
+    private List<MovieDetails> list = new ArrayList<>();
+    private MoviesAPIInterface service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
+    private ProgressBar loadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +41,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        adapter = null;
+
+        loadingIndicator = findViewById(R.id.loading_spinner);
         gridView = findViewById(R.id.postersGridView);
 
-        Call<MoviesList> call = service.getPopularMovies(MoviesAPIInterface.apiKey);
-        new GetMovies().execute(call);
+        if (checkInternetConnection()) {
+            loadingIndicator.setVisibility(View.VISIBLE);
+            Call<MoviesList> call = service.getPopularMovies(MoviesAPIInterface.apiKey);
+            getResponse(call);
+        } else {
+            Toast.makeText(getApplicationContext(), "No internet connection!", Toast.LENGTH_LONG).show();
+        }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -49,6 +62,31 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private boolean checkInternetConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connectivityManager.getActiveNetworkInfo() != null;
+    }
+
+    private void getResponse(Call call) {
+        list.clear();
+        AsyncRequestHandler requestHandler = new AsyncRequestHandler(call, getApplicationContext(), new AsyncEventListener() {
+            @Override
+            public void onFailure(Exception e) {
+
+            }
+
+            @Override
+            public void onSuccess(List movies) {
+                adapter = new PosterAdapter(getApplicationContext(), movies);
+                gridView.setAdapter(adapter);
+                loadingIndicator.setVisibility(View.GONE);
+                list.addAll(movies);
+            }
+        });
+
+        requestHandler.execute(call);
     }
 
     @Override
@@ -64,49 +102,15 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_most_popular) {
             gridView.setAdapter(null);
             Call<MoviesList> call = service.getPopularMovies(MoviesAPIInterface.apiKey);
-            new GetMovies().execute(call);
+            getResponse(call);
         }
         if (id == R.id.action_top_rated) {
             gridView.setAdapter(null);
             Call<MoviesList> call = service.getTopRatedMovies(MoviesAPIInterface.apiKey);
-            new GetMovies().execute(call);
+            getResponse(call);
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-
-    private class GetMovies extends AsyncTask<Call, Void, MoviesList> {
-        private ProgressBar loadingIndicator;
-
-        @Override
-        protected void onPreExecute() {
-            adapter = (PosterAdapter) gridView.getAdapter();
-            loadingIndicator = findViewById(R.id.loading_spinner);
-            loadingIndicator.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected MoviesList doInBackground(Call... params) {
-            try {
-                Call<MoviesList> call = params[0];
-                Response<MoviesList> response = call.execute();
-                return response.body();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(MoviesList result) {
-            list = result.getResultsList();
-            adapter = new PosterAdapter(getApplicationContext(), list);
-            gridView.setAdapter(adapter);
-            // if(adapter.isUIReady()){
-            loadingIndicator.setVisibility(View.GONE);
-            //  }
-        }
     }
 }
 

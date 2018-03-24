@@ -1,39 +1,70 @@
 package io.git.movies.popularmovies.pojos;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
-public class MovieDetails implements Serializable {
+public class MovieDetails implements Parcelable {
     @SerializedName("vote_count")
-    int voteCount;
+    private int voteCount;
     @SerializedName("id")
-    int id;
+    private int id;
     @SerializedName("video")
-    boolean video;
+    private boolean video;
     @SerializedName("vote_average")
-    double voteAverage;
+    private double voteAverage;
     @SerializedName("title")
-    String title;
+    private String title;
     @SerializedName("popularity")
-    double popularity;
+    private double popularity;
     @SerializedName("poster_path")
-    String posterPath;
+    private String posterPath;
     @SerializedName("original_language")
-    String originalLanguage;
+    private String originalLanguage;
     @SerializedName("original_title")
-    String originalTitle;
+    private String originalTitle;
     @SerializedName("genre_ids")
-    int[] genreIds;
+    private int[] genreIds;
     @SerializedName("backdrop_path")
-    String backdropPath;
+    private String backdropPath;
     @SerializedName("adult")
-    boolean adult;
+    private boolean adult;
     @SerializedName("overview")
-    String overview;
+    private String overview;
     @SerializedName("release_date")
-    String releaseDate;
+    private String releaseDate;
+
+    private MovieDetails(Parcel in) {
+        voteCount = in.readInt();
+        id = in.readInt();
+        video = in.readByte() != 0;
+        voteAverage = in.readDouble();
+        title = in.readString();
+        popularity = in.readDouble();
+        posterPath = in.readString();
+        originalLanguage = in.readString();
+        originalTitle = in.readString();
+        genreIds = in.createIntArray();
+        backdropPath = in.readString();
+        adult = in.readByte() != 0;
+        overview = in.readString();
+        releaseDate = in.readString();
+    }
+
+    public static final Creator<MovieDetails> CREATOR = new Creator<MovieDetails>() {
+        @Override
+        public MovieDetails createFromParcel(Parcel in) {
+            return new MovieDetails(in);
+        }
+
+        @Override
+        public MovieDetails[] newArray(int size) {
+            return new MovieDetails[size];
+        }
+    };
 
     public int getVoteCount() {
         return voteCount;
@@ -165,5 +196,28 @@ public class MovieDetails implements Serializable {
                 ", overview='" + overview + '\'' +
                 ", releaseDate='" + releaseDate + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(voteCount);
+        parcel.writeInt(id);
+        parcel.writeByte((byte) (video ? 1 : 0));
+        parcel.writeDouble(voteAverage);
+        parcel.writeString(title);
+        parcel.writeDouble(popularity);
+        parcel.writeString(posterPath);
+        parcel.writeString(originalLanguage);
+        parcel.writeString(originalTitle);
+        parcel.writeIntArray(genreIds);
+        parcel.writeString(backdropPath);
+        parcel.writeByte((byte) (adult ? 1 : 0));
+        parcel.writeString(overview);
+        parcel.writeString(releaseDate);
     }
 }
