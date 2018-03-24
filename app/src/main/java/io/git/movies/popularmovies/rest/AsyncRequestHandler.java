@@ -14,14 +14,14 @@ import retrofit2.Response;
 public class AsyncRequestHandler extends AsyncTask<Call, Void, MoviesList> {
 
     private List list;
-    private AsyncEventListener bridge;
+    private AsyncEventListener asyncEventListener;
     private Call<MoviesList> myCall;
     private Context myContext;
 
     public AsyncRequestHandler(Call call, Context context, AsyncEventListener eventListener) {
         myCall = call;
         myContext = context;
-        bridge = eventListener;
+        asyncEventListener = eventListener;
     }
 
     @Override
@@ -45,8 +45,8 @@ public class AsyncRequestHandler extends AsyncTask<Call, Void, MoviesList> {
     protected void onPostExecute(MoviesList result) {
         if (result != null) {
             list = result.getResultsList();
-            if (bridge != null) {
-                bridge.onSuccess(list);
+            if (asyncEventListener != null) {
+                asyncEventListener.onSuccess(list);
             }
         } else {
             Toast.makeText(myContext, "No result", Toast.LENGTH_SHORT).show();
