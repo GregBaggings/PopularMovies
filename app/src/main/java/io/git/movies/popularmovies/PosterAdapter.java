@@ -14,7 +14,7 @@ import java.util.List;
 import io.git.movies.popularmovies.pojos.MovieDetails;
 
 public class PosterAdapter extends BaseAdapter {
-    URLBuilder urlBuilder = new URLBuilder();
+    private URLBuilder urlBuilder = new URLBuilder();
     private final Context context;
     private final List<MovieDetails> detailsList;
 
@@ -43,6 +43,7 @@ public class PosterAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         ImageView imageView = new ImageView(context);
         Picasso.with(context).load(urlBuilder.buildPosterURL(detailsList.get(i).getPosterPath())).into(imageView);
+
         return imageView;
     }
 }

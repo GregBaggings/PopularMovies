@@ -5,15 +5,15 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class PopularResponse implements Serializable {
+public class MoviesList implements Serializable {
     @SerializedName("page")
-    int page;
+    private int page;
     @SerializedName("total_results")
-    int totalResults;
+    private int totalResults;
     @SerializedName("total_pages")
-    int totalPages;
+    private int totalPages;
     @SerializedName("results")
-    List<MovieDetails> resultsList;
+    private List<MovieDetails> resultsList;
 
     public int getPage() {
         return page;

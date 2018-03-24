@@ -5,9 +5,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ProgressBar;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.git.movies.popularmovies.pojos.MovieDetails;
-import io.git.movies.popularmovies.pojos.PopularResponse;
+import io.git.movies.popularmovies.pojos.MoviesList;
 import io.git.movies.popularmovies.rest.MoviesAPI;
 import io.git.movies.popularmovies.rest.MoviesAPIInterface;
 import retrofit2.Call;
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     PosterAdapter adapter;
     GridView gridView;
     List<MovieDetails> list = new ArrayList<>();
-
+    MoviesAPIInterface service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
         gridView = findViewById(R.id.postersGridView);
 
-        MoviesAPIInterface service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
-        final Call<PopularResponse> call = service.getPopularMoviesResponse(MoviesAPIInterface.apiKey);
-        new GetPopularMovies().execute(call);
+        Call<MoviesList> call = service.getPopularMovies(MoviesAPIInterface.apiKey);
+        new GetMovies().execute(call);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -62,15 +61,22 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_most_popular) {
+            gridView.setAdapter(null);
+            Call<MoviesList> call = service.getPopularMovies(MoviesAPIInterface.apiKey);
+            new GetMovies().execute(call);
+        }
+        if (id == R.id.action_top_rated) {
+            gridView.setAdapter(null);
+            Call<MoviesList> call = service.getTopRatedMovies(MoviesAPIInterface.apiKey);
+            new GetMovies().execute(call);
         }
 
         return super.onOptionsItemSelected(item);
     }
 
 
-    private class GetPopularMovies extends AsyncTask<Call, Void, PopularResponse> {
+    private class GetMovies extends AsyncTask<Call, Void, MoviesList> {
         private ProgressBar loadingIndicator;
 
         @Override
@@ -81,10 +87,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected PopularResponse doInBackground(Call... params) {
+        protected MoviesList doInBackground(Call... params) {
             try {
-                Call<PopularResponse> call = params[0];
-                Response<PopularResponse> response = call.execute();
+                Call<MoviesList> call = params[0];
+                Response<MoviesList> response = call.execute();
                 return response.body();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -93,14 +99,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(PopularResponse result) {
+        protected void onPostExecute(MoviesList result) {
             list = result.getResultsList();
             adapter = new PosterAdapter(getApplicationContext(), list);
             gridView.setAdapter(adapter);
-
-            // Would like to add a check here to make sure that the UI is ready to show after the adapter setting
-            // (in the adapter getView I auto create the ImageViews and load them with the image via Picasso)
+            // if(adapter.isUIReady()){
             loadingIndicator.setVisibility(View.GONE);
+            //  }
         }
     }
 }
