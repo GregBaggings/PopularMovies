@@ -34,9 +34,10 @@ public class DetailsActivity extends AppCompatActivity implements YouTubePlayer.
     @BindView(R.id.posterIV)
     ImageView posterIV;
 
-    private YouTubePlayerFragment playerFragment;
-    private YouTubePlayer mPlayer;
+    private YouTubePlayerFragment youtubeFragment;
+    private YouTubePlayer youtubePlayer;
     private String YouTubeKey = BuildConfig.YoutubeAPIKey;
+    MovieDetails details = getIntent().getExtras().getParcelable("MOVIE_DATA");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +49,12 @@ public class DetailsActivity extends AppCompatActivity implements YouTubePlayer.
 
         populateMovieDetailsOnUI();
 
-        playerFragment =
-                (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.youtube_fragment);
-
-        playerFragment.initialize(YouTubeKey, this);
+        youtubeFragment = (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.youtube_fragment);
+        youtubeFragment.initialize(YouTubeKey, this);
     }
 
     private void populateMovieDetailsOnUI() {
         URLBuilder urlBuilder = new URLBuilder();
-        MovieDetails details = getIntent().getExtras().getParcelable("MOVIE_DATA");
 
         if (details != null) {
             titleTV.setText(getText(R.string.title_tv_default) + details.getTitle());
@@ -72,7 +70,7 @@ public class DetailsActivity extends AppCompatActivity implements YouTubePlayer.
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-        mPlayer = youTubePlayer;
+        youtubePlayer = youTubePlayer;
 
         if (!b) {
             // TODO: Add GridLayout to show the video list and onClick to load the movie via the key.
@@ -81,14 +79,14 @@ public class DetailsActivity extends AppCompatActivity implements YouTubePlayer.
             videoList.add("Q0CbN8sfihY");
             videoList.add("-py2awmME8s");
             videoList.add("WcIfbdfZRDQ");
-            mPlayer.cueVideos(videoList);
+            youtubePlayer.cueVideos(videoList);
         } else {
-            mPlayer.play();
+            youtubePlayer.play();
         }
     }
 
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-        mPlayer = null;
+        youtubePlayer = null;
     }
 }
