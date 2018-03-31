@@ -1,24 +1,26 @@
 package io.git.movies.popularmovies.activities;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.git.movies.popularmovies.R;
-import io.git.movies.popularmovies.adapter.PosterAdapter;
+import io.git.movies.popularmovies.adapter.RecyclerViewAdapter;
 import io.git.movies.popularmovies.pojos.MovieDetails;
 import io.git.movies.popularmovies.pojos.MoviesList;
 import io.git.movies.popularmovies.rest.AsyncEventListener;
@@ -28,49 +30,53 @@ import io.git.movies.popularmovies.rest.MoviesAPIInterface;
 import retrofit2.Call;
 
 public class MainActivity extends AppCompatActivity {
-    private PosterAdapter adapter;
-    private GridView gridView;
+    private RecyclerViewAdapter recyclerViewAdapter;
+    private RecyclerView.LayoutManager layoutManager;
     private List<MovieDetails> list = new ArrayList<>();
     private MoviesAPIInterface service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
-    private ProgressBar loadingIndicator;
+    @BindView(R.id.loading_indicator)
+    ProgressBar loadingIndicator;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
-
-        adapter = null;
-
-        loadingIndicator = findViewById(R.id.loading_spinner);
-        gridView = findViewById(R.id.postersGridView);
+        recyclerViewAdapter = null;
+        setRecyclerViewDetails();
 
         if (checkInternetConnection()) {
             loadingIndicator.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.INVISIBLE);
             Call<MoviesList> call = service.getPopularMovies(MoviesAPIInterface.apiKey);
             getResponse(call);
         } else {
             Toast.makeText(getApplicationContext(), "No internet connection!", Toast.LENGTH_LONG).show();
         }
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getBaseContext(), DetailsActivity.class);
-                intent.putExtra("MOVIE_DATA", list.get(position));
-                startActivity(intent);
-            }
-        });
     }
 
-    private boolean checkInternetConnection() {
+    private void setRecyclerViewDetails() {
+        recyclerViewAdapter = new RecyclerViewAdapter(getApplicationContext(), list, recyclerView, loadingIndicator);
+        layoutManager = new GridLayoutManager(getApplicationContext(), 2);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    private boolean checkInternetConnection() throws NullPointerException {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo() != null;
     }
 
     private void getResponse(Call call) {
         list.clear();
+        loadingIndicator.setVisibility(View.VISIBLE);
         AsyncRequestHandler requestHandler = new AsyncRequestHandler(call, getApplicationContext(), new AsyncEventListener() {
             @Override
             public void onFailure(Exception e) {
@@ -79,9 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(List movies) {
-                adapter = new PosterAdapter(getApplicationContext(), movies);
-                gridView.setAdapter(adapter);
-                loadingIndicator.setVisibility(View.GONE);
+                recyclerViewAdapter = new RecyclerViewAdapter(getApplicationContext(), movies, recyclerView, loadingIndicator);
+                recyclerView.setAdapter(recyclerViewAdapter);
                 list.addAll(movies);
             }
         });
@@ -100,12 +105,12 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_most_popular) {
-            gridView.setAdapter(null);
+            recyclerView.setAdapter(null);
             Call<MoviesList> call = service.getPopularMovies(MoviesAPIInterface.apiKey);
             getResponse(call);
         }
         if (id == R.id.action_top_rated) {
-            gridView.setAdapter(null);
+            recyclerView.setAdapter(null);
             Call<MoviesList> call = service.getTopRatedMovies(MoviesAPIInterface.apiKey);
             getResponse(call);
         }
@@ -113,5 +118,3 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
-
-

@@ -7,6 +7,7 @@
     <string name="release_date_tv_default">Release Date: \n</string>
     <string name="avg_tv_default">Avg. Rating: \n</string>
     <string name="plot_tv_default">Plot: \n</string>
+    <string name="poster_iv_default">Place of poster</string>
 
     <string name="top_rated">Rating</string>
     <string name="most_popular">Popularity</string>
