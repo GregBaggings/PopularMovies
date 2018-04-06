@@ -37,7 +37,6 @@ public class DetailsActivity extends AppCompatActivity implements YouTubePlayer.
     private YouTubePlayerFragment youtubeFragment;
     private YouTubePlayer youtubePlayer;
     private String YouTubeKey = BuildConfig.YoutubeAPIKey;
-    MovieDetails details = getIntent().getExtras().getParcelable("MOVIE_DATA");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +54,7 @@ public class DetailsActivity extends AppCompatActivity implements YouTubePlayer.
 
     private void populateMovieDetailsOnUI() {
         URLBuilder urlBuilder = new URLBuilder();
+        MovieDetails details = getIntent().getExtras().getParcelable("MOVIE_DATA");
 
         if (details != null) {
             titleTV.setText(getText(R.string.title_tv_default) + details.getTitle());
