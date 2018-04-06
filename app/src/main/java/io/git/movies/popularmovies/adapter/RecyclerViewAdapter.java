@@ -4,6 +4,7 @@ package io.git.movies.popularmovies.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,13 @@ import butterknife.ButterKnife;
 import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.activities.DetailsActivity;
 import io.git.movies.popularmovies.pojos.MovieDetails;
+import io.git.movies.popularmovies.pojos.VideoList;
+import io.git.movies.popularmovies.rest.AsyncEventListener;
+import io.git.movies.popularmovies.rest.AsyncTrailerRequestHandler;
+import io.git.movies.popularmovies.rest.MoviesAPI;
+import io.git.movies.popularmovies.rest.MoviesAPIInterface;
 import io.git.movies.popularmovies.utils.URLBuilder;
+import retrofit2.Call;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ImageViewHolder> {
     private URLBuilder urlBuilder = new URLBuilder();
@@ -73,6 +80,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public class ImageViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.posterIV)
         ImageView posterIV;
+        Intent intent;
+        int index;
         private List<MovieDetails> list;
         private Context context;
 
@@ -82,13 +91,38 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             list = detailsList;
             context = myContext;
 
+            intent = new Intent(context, DetailsActivity.class);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int index = getAdapterPosition();
-                    Intent intent = new Intent(context, DetailsActivity.class);
-                    intent.putExtra("MOVIE_DATA", list.get(index));
-                    context.startActivity(intent);
+                    index = getAdapterPosition();
+                    int id = list.get(index).getId();
+
+                    MoviesAPIInterface service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
+                    Call<VideoList> call = service.getTrailers(id, MoviesAPIInterface.apiKey);
+                    AsyncTrailerRequestHandler requestHandler = new AsyncTrailerRequestHandler(call, context, new AsyncEventListener() {
+                        @Override
+                        public void onSuccessTrailers(VideoList videos) {
+                            intent.putExtra("TRAILER_DATA", videos);
+                            intent.putExtra("MOVIE_DATA", list.get(index));
+
+                            Log.i("TESZT", "TRAILER DATA " + intent.getExtras().get("TRAILER_DATA"));
+
+                            context.startActivity(intent);
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+
+                        }
+
+                        @Override
+                        public void onSuccessMovies(List movies) {
+
+                        }
+                    });
+
+                    requestHandler.execute(call);
                 }
             });
         }

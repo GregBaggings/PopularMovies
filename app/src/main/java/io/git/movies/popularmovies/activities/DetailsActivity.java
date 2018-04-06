@@ -3,6 +3,7 @@ package io.git.movies.popularmovies.activities;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ import butterknife.ButterKnife;
 import io.git.movies.popularmovies.BuildConfig;
 import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.pojos.MovieDetails;
+import io.git.movies.popularmovies.pojos.VideoList;
 import io.git.movies.popularmovies.utils.URLBuilder;
 
 public class DetailsActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener {
@@ -55,6 +57,9 @@ public class DetailsActivity extends AppCompatActivity implements YouTubePlayer.
     private void populateMovieDetailsOnUI() {
         URLBuilder urlBuilder = new URLBuilder();
         MovieDetails details = getIntent().getExtras().getParcelable("MOVIE_DATA");
+        VideoList videoDetails = getIntent().getExtras().getParcelable("TRAILER_DATA");
+
+        Log.i("TESZT", "DETAILS ACTIVITY " + videoDetails.toString());
 
         if (details != null) {
             titleTV.setText(getText(R.string.title_tv_default) + details.getTitle());

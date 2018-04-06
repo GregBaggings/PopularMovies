@@ -23,8 +23,9 @@ import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.adapter.RecyclerViewAdapter;
 import io.git.movies.popularmovies.pojos.MovieDetails;
 import io.git.movies.popularmovies.pojos.MoviesList;
+import io.git.movies.popularmovies.pojos.VideoList;
 import io.git.movies.popularmovies.rest.AsyncEventListener;
-import io.git.movies.popularmovies.rest.AsyncRequestHandler;
+import io.git.movies.popularmovies.rest.AsyncMoviesRequestHandler;
 import io.git.movies.popularmovies.rest.MoviesAPI;
 import io.git.movies.popularmovies.rest.MoviesAPIInterface;
 import retrofit2.Call;
@@ -77,14 +78,19 @@ public class MainActivity extends AppCompatActivity {
     private void getResponse(Call call) {
         list.clear();
         loadingIndicator.setVisibility(View.VISIBLE);
-        AsyncRequestHandler requestHandler = new AsyncRequestHandler(call, getApplicationContext(), new AsyncEventListener() {
+        AsyncMoviesRequestHandler requestHandler = new AsyncMoviesRequestHandler(call, getApplicationContext(), new AsyncEventListener() {
+            @Override
+            public void onSuccessTrailers(VideoList videos) {
+
+            }
+
             @Override
             public void onFailure(Exception e) {
 
             }
 
             @Override
-            public void onSuccess(List movies) {
+            public void onSuccessMovies(List movies) {
                 recyclerViewAdapter = new RecyclerViewAdapter(getApplicationContext(), movies, recyclerView, loadingIndicator);
                 recyclerView.setAdapter(recyclerViewAdapter);
                 list.addAll(movies);

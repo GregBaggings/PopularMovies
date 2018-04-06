@@ -11,14 +11,14 @@ import io.git.movies.popularmovies.pojos.MoviesList;
 import retrofit2.Call;
 import retrofit2.Response;
 
-public class AsyncRequestHandler extends AsyncTask<Call, Void, MoviesList> {
+public class AsyncMoviesRequestHandler extends AsyncTask<Call, Void, MoviesList> {
 
     private List list;
     private AsyncEventListener asyncEventListener;
     private Call<MoviesList> myCall;
     private Context myContext;
 
-    public AsyncRequestHandler(Call call, Context context, AsyncEventListener eventListener) {
+    public AsyncMoviesRequestHandler(Call call, Context context, AsyncEventListener eventListener) {
         myCall = call;
         myContext = context;
         asyncEventListener = eventListener;
@@ -46,7 +46,7 @@ public class AsyncRequestHandler extends AsyncTask<Call, Void, MoviesList> {
         if (result != null) {
             list = result.getResultsList();
             if (asyncEventListener != null) {
-                asyncEventListener.onSuccess(list);
+                asyncEventListener.onSuccessMovies(list);
             }
         } else {
             Toast.makeText(myContext, "No result", Toast.LENGTH_SHORT).show();

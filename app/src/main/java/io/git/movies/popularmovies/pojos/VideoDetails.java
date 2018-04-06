@@ -24,6 +24,29 @@ public class VideoDetails implements Parcelable {
     @SerializedName("size")
     private String size;
 
+    protected VideoDetails(Parcel in) {
+        site = in.readString();
+        id = in.readString();
+        iso_639_1 = in.readString();
+        name = in.readString();
+        type = in.readString();
+        key = in.readString();
+        iso_3166_1 = in.readString();
+        size = in.readString();
+    }
+
+    public static final Creator<VideoDetails> CREATOR = new Creator<VideoDetails>() {
+        @Override
+        public VideoDetails createFromParcel(Parcel in) {
+            return new VideoDetails(in);
+        }
+
+        @Override
+        public VideoDetails[] newArray(int size) {
+            return new VideoDetails[size];
+        }
+    };
+
     public String getSite() {
         return site;
     }
@@ -95,6 +118,27 @@ public class VideoDetails implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(site);
+        parcel.writeString(id);
+        parcel.writeString(iso_639_1);
+        parcel.writeString(name);
+        parcel.writeString(type);
+        parcel.writeString(key);
+        parcel.writeString(iso_3166_1);
+        parcel.writeString(size);
+    }
 
+    @Override
+    public String toString() {
+        return "VideoDetails{" +
+                "site='" + site + '\'' +
+                ", id='" + id + '\'' +
+                ", iso_639_1='" + iso_639_1 + '\'' +
+                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", key='" + key + '\'' +
+                ", iso_3166_1='" + iso_3166_1 + '\'' +
+                ", size='" + size + '\'' +
+                '}';
     }
 }

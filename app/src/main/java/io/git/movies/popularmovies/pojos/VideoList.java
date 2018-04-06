@@ -12,20 +12,10 @@ public class VideoList implements Parcelable {
     @SerializedName("id")
     private String id;
     @SerializedName("results")
-    private List<VideoList> videoList;
+    private List<VideoDetails> videoList;
 
     protected VideoList(Parcel in) {
         id = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
     }
 
     public static final Creator<VideoList> CREATOR = new Creator<VideoList>() {
@@ -40,6 +30,17 @@ public class VideoList implements Parcelable {
         }
     };
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
     public String getId() {
         return id;
     }
@@ -48,12 +49,19 @@ public class VideoList implements Parcelable {
         this.id = id;
     }
 
-    public List<VideoList> getVideoList() {
+    public List<VideoDetails> getVideoList() {
         return videoList;
     }
 
-    public void setVideoList(List<VideoList> videoList) {
+    public void setVideoList(List<VideoDetails> videoList) {
         this.videoList = videoList;
     }
 
+    @Override
+    public String toString() {
+        return "VideoList{" +
+                "id='" + id + '\'' +
+                ", videoList=" + videoList +
+                '}';
+    }
 }
