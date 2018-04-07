@@ -91,15 +91,15 @@
             app:srcCompat="@mipmap/ic_launcher" />
 
         <View
-            android:layout_width="fill_parent"
             android:id="@+id/horizontal_line"
+            android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="#000000"
+            android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="12dp"
+            android:background="#000000"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/plotTV"/>
+            app:layout_constraintTop_toBottomOf="@+id/plotTV" />
 
         <TextView
             android:id="@+id/trailers_header"
@@ -122,8 +122,26 @@
             android:layout_marginTop="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/trailers_header" />
+            app:layout_constraintTop_toBottomOf="@+id/trailers_header"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <fragment
+            android:id="@+id/videoListFragment"
+            class="io.git.movies.popularmovies.fragments.VideoListFragment"
+            android:layout_width="0dp"
+            android:layout_height="400dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/youtube_fragment"
+            app:layout_constraintVertical_bias="0.0" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

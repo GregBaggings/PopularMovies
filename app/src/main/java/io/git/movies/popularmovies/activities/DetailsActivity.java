@@ -1,8 +1,7 @@
 package io.git.movies.popularmovies.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,7 +23,7 @@ import io.git.movies.popularmovies.pojos.MovieDetails;
 import io.git.movies.popularmovies.pojos.VideoList;
 import io.git.movies.popularmovies.utils.URLBuilder;
 
-public class DetailsActivity extends AppCompatActivity implements YouTubePlayer.OnInitializedListener {
+public class DetailsActivity extends FragmentActivity implements YouTubePlayer.OnInitializedListener {
     @BindView(R.id.titleTV)
     TextView titleTV;
     @BindView(R.id.plotTV)
@@ -45,8 +44,8 @@ public class DetailsActivity extends AppCompatActivity implements YouTubePlayer.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+       // Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         populateMovieDetailsOnUI();
 
