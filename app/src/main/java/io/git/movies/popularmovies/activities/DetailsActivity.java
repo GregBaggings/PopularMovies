@@ -1,29 +1,24 @@
 package io.git.movies.popularmovies.activities;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.git.movies.popularmovies.BuildConfig;
 import io.git.movies.popularmovies.R;
+import io.git.movies.popularmovies.fragments.VideoListFragment;
 import io.git.movies.popularmovies.pojos.MovieDetails;
 import io.git.movies.popularmovies.pojos.VideoList;
 import io.git.movies.popularmovies.utils.URLBuilder;
 
-public class DetailsActivity extends FragmentActivity implements YouTubePlayer.OnInitializedListener {
+public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.titleTV)
     TextView titleTV;
     @BindView(R.id.plotTV)
@@ -35,30 +30,32 @@ public class DetailsActivity extends FragmentActivity implements YouTubePlayer.O
     @BindView(R.id.posterIV)
     ImageView posterIV;
 
-    private YouTubePlayerFragment youtubeFragment;
-    private YouTubePlayer youtubePlayer;
-    private String YouTubeKey = BuildConfig.YoutubeAPIKey;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
-       // Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         populateMovieDetailsOnUI();
 
-        youtubeFragment = (YouTubePlayerFragment) getFragmentManager().findFragmentById(R.id.youtube_fragment);
-        youtubeFragment.initialize(YouTubeKey, this);
+
     }
 
     private void populateMovieDetailsOnUI() {
         URLBuilder urlBuilder = new URLBuilder();
         MovieDetails details = getIntent().getExtras().getParcelable("MOVIE_DATA");
         VideoList videoDetails = getIntent().getExtras().getParcelable("TRAILER_DATA");
-
         Log.i("TESZT", "DETAILS ACTIVITY " + videoDetails.toString());
+
+        // VideoListFragment videoListFragment = VideoListFragment.newInstance(videoDetails); No worked :(
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("trailers", videoDetails);
+        VideoListFragment videoListFragment = new VideoListFragment();
+        videoListFragment.setArguments(bundle);
+
 
         if (details != null) {
             titleTV.setText(getText(R.string.title_tv_default) + details.getTitle());
@@ -70,27 +67,5 @@ public class DetailsActivity extends FragmentActivity implements YouTubePlayer.O
             Toast.makeText(this, "No data to present.", Toast.LENGTH_LONG).show();
             finish();
         }
-    }
-
-    @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-        youtubePlayer = youTubePlayer;
-
-        if (!b) {
-            // TODO: Add GridLayout to show the video list and onClick to load the movie via the key.
-            // Example for loading video list
-            List videoList = new ArrayList();
-            videoList.add("Q0CbN8sfihY");
-            videoList.add("-py2awmME8s");
-            videoList.add("WcIfbdfZRDQ");
-            youtubePlayer.cueVideos(videoList);
-        } else {
-            youtubePlayer.play();
-        }
-    }
-
-    @Override
-    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-        youtubePlayer = null;
     }
 }

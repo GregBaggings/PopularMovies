@@ -50,4 +50,20 @@ public class VideoList implements Parcelable {
                 ", videoList=" + videoList +
                 '}';
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<VideoDetails> getVideoList() {
+        return videoList;
+    }
+
+    public void setVideoList(List<VideoDetails> videoList) {
+        this.videoList = videoList;
+    }
 }
