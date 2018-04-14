@@ -10,24 +10,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.git.movies.popularmovies.R;
+import io.git.movies.popularmovies.pojos.VideoList;
 
 public class VideoListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
     String dummy[] = {"a","b","c"};
-    List list = new ArrayList();
+    VideoList videoList;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.videos_fragment, container, false);
         if (getArguments() != null) {
-            list = getArguments().getParcelable("trailers");
-            Log.i("TESZT", "Trailers from Bundle: " + list);
+            videoList = getArguments().getParcelable("trailers");
+            Log.i("TESZT", "Trailers from Bundle: " + videoList);
         }
+        View view = inflater.inflate(R.layout.videos_fragment, container, false);
         return view;
     }
 
