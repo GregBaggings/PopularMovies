@@ -2,7 +2,6 @@ package io.git.movies.popularmovies.rest;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -46,7 +45,6 @@ public class AsyncTrailerRequestHandler extends AsyncTask<Call, Void, VideoList>
     protected void onPostExecute(VideoList result) {
         if (result != null) {
             if (asyncEventListener != null) {
-                Log.i("TESZT", result.toString());
                 asyncEventListener.onSuccessTrailers(result);
             }
         } else {

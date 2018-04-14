@@ -3,7 +3,6 @@ package io.git.movies.popularmovies.activities;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,23 +38,17 @@ public class DetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         populateMovieDetailsOnUI();
-
-
     }
 
     private void populateMovieDetailsOnUI() {
         URLBuilder urlBuilder = new URLBuilder();
         MovieDetails details = getIntent().getExtras().getParcelable("MOVIE_DATA");
         VideoList videoDetails = getIntent().getExtras().getParcelable("TRAILER_DATA");
-        Log.i("TESZT", "DETAILS ACTIVITY " + videoDetails.toString());
-
-        // VideoListFragment videoListFragment = VideoListFragment.newInstance(videoDetails); No worked :(
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("trailers", videoDetails);
         VideoListFragment videoListFragment = new VideoListFragment();
         videoListFragment.setArguments(bundle);
-
 
         if (details != null) {
             titleTV.setText(getText(R.string.title_tv_default) + details.getTitle());

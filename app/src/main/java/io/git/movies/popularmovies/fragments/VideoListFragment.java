@@ -17,32 +17,25 @@ import io.git.movies.popularmovies.R;
 
 public class VideoListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
-    String[] dummyItems = {"Test1", "Test2", "Test3", "Test4", "Test5"};
+    String dummy[] = {"a","b","c"};
     List list = new ArrayList();
-
-   /* public static VideoListFragment newInstance(VideoList videoDetails) {
-        VideoListFragment fragment = new VideoListFragment();
-        Bundle args = new Bundle();
-        args.putParcelable("trailers", videoDetails);
-        fragment.setArguments(args);
-        return fragment;
-    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.videos_fragment, container, false);
+        if (getArguments() != null) {
+            list = getArguments().getParcelable("trailers");
+            Log.i("TESZT", "Trailers from Bundle: " + list);
+        }
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (getArguments() != null) {
-            list = getArguments().getParcelable("trailers");
-            Log.i("TESZT", "Content from the details activity: " + list.toString());
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, dummyItems);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, dummy);
         setListAdapter(adapter);
         getListView().setOnItemClickListener(this);
     }
