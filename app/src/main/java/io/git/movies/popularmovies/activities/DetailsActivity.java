@@ -1,5 +1,6 @@
 package io.git.movies.popularmovies.activities;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -49,6 +50,10 @@ public class DetailsActivity extends AppCompatActivity {
         bundle.putParcelable("trailers", videoDetails);
         VideoListFragment videoListFragment = new VideoListFragment();
         videoListFragment.setArguments(bundle);
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.replace(R.id.videoFragmentPlaceholder, videoListFragment);
+        ft.commit();
 
         if (details != null) {
             titleTV.setText(getText(R.string.title_tv_default) + details.getTitle());

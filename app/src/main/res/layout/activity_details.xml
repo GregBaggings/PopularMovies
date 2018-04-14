@@ -111,9 +111,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/horizontal_line" />
 
-        <fragment
-            android:id="@+id/videoListFragment"
-            class="io.git.movies.popularmovies.fragments.VideoListFragment"
+        <FrameLayout
+            android:id="@+id/videoFragmentPlaceholder"
             android:layout_width="0dp"
             android:layout_height="200dp"
             android:layout_marginBottom="20dp"
@@ -128,4 +127,5 @@
             app:layout_constraintVertical_bias="0.0" />
 
     </android.support.constraint.ConstraintLayout>
+
 </ScrollView>
