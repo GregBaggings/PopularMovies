@@ -2,6 +2,7 @@ package io.git.movies.popularmovies.fragments;
 
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +16,18 @@ import io.git.movies.popularmovies.pojos.Reviews;
 
 public class ReviewListFragment extends ListFragment {
 
-    List reviewComments = new ArrayList<>();
-    Reviews reviews;
-    String[] test = {"a","b","c"};
+    private List reviewComments = new ArrayList<>();
+    private Reviews reviews;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-    /* it gets executed too early... Need a solution to wait for the async request to finish and continue after it
-    if (getArguments() != null) {
+        if (getArguments() != null) {
             reviews = getArguments().getParcelable("reviews");
             Log.i("TESZT", "Reviews from Bundle: " + reviews);
             getReviewItems(reviews);
             Log.i("TESZT", "Review comments: " + reviewComments);
-        }*/
+        }
         View view = inflater.inflate(R.layout.reviews_fragment, container, false);
         return view;
     }
@@ -36,7 +35,7 @@ public class ReviewListFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, test);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, reviewComments);
         setListAdapter(adapter);
     }
 

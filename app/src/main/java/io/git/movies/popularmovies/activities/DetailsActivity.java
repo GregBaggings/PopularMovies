@@ -16,6 +16,7 @@ import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.fragments.ReviewListFragment;
 import io.git.movies.popularmovies.fragments.VideoListFragment;
 import io.git.movies.popularmovies.pojos.MovieDetails;
+import io.git.movies.popularmovies.pojos.Reviews;
 import io.git.movies.popularmovies.pojos.VideoList;
 import io.git.movies.popularmovies.utils.URLBuilder;
 
@@ -46,9 +47,11 @@ public class DetailsActivity extends AppCompatActivity {
         URLBuilder urlBuilder = new URLBuilder();
         MovieDetails details = getIntent().getExtras().getParcelable("MOVIE_DATA");
         VideoList videoDetails = getIntent().getExtras().getParcelable("TRAILER_DATA");
+        Reviews reviews = getIntent().getExtras().getParcelable("REVIEW_DATA");
 
         Bundle bundle = new Bundle();
         bundle.putParcelable("trailers", videoDetails);
+        bundle.putParcelable("reviews", reviews);
         VideoListFragment videoListFragment = new VideoListFragment();
         videoListFragment.setArguments(bundle);
         ReviewListFragment reviewListFragment = new ReviewListFragment();

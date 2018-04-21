@@ -121,6 +121,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 public void onSuccessReviews(Reviews reviews) {
                     Log.i("TESZT", "Reviews: " + reviews.toString());
                     intent.putExtra("REVIEW_DATA", reviews);
+                    context.startActivity(intent);
                 }
 
                 @Override
@@ -144,8 +145,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 public void onSuccessTrailers(VideoList videos) {
                     intent.putExtra("TRAILER_DATA", videos);
                     intent.putExtra("MOVIE_DATA", list.get(index));
-
-                    context.startActivity(intent);
                 }
 
                 @Override
