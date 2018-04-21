@@ -23,6 +23,7 @@ import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.adapter.RecyclerViewAdapter;
 import io.git.movies.popularmovies.pojos.MovieDetails;
 import io.git.movies.popularmovies.pojos.MoviesList;
+import io.git.movies.popularmovies.pojos.Reviews;
 import io.git.movies.popularmovies.pojos.VideoList;
 import io.git.movies.popularmovies.rest.AsyncEventListener;
 import io.git.movies.popularmovies.rest.AsyncMoviesRequestHandler;
@@ -81,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
         AsyncMoviesRequestHandler requestHandler = new AsyncMoviesRequestHandler(call, getApplicationContext(), new AsyncEventListener() {
             @Override
             public void onSuccessTrailers(VideoList videos) {
+
+            }
+
+            @Override
+            public void onSuccessReviews(Reviews reviews) {
 
             }
 

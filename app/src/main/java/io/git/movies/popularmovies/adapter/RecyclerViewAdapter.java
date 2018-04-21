@@ -4,6 +4,7 @@ package io.git.movies.popularmovies.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,10 @@ import butterknife.ButterKnife;
 import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.activities.DetailsActivity;
 import io.git.movies.popularmovies.pojos.MovieDetails;
+import io.git.movies.popularmovies.pojos.Reviews;
 import io.git.movies.popularmovies.pojos.VideoList;
 import io.git.movies.popularmovies.rest.AsyncEventListener;
+import io.git.movies.popularmovies.rest.AsyncReviewRequestHandler;
 import io.git.movies.popularmovies.rest.AsyncTrailerRequestHandler;
 import io.git.movies.popularmovies.rest.MoviesAPI;
 import io.git.movies.popularmovies.rest.MoviesAPIInterface;
@@ -83,6 +86,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         int index;
         private List<MovieDetails> list;
         private Context context;
+        MoviesAPIInterface service;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -97,31 +101,70 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     index = getAdapterPosition();
                     int id = list.get(index).getId();
 
-                    MoviesAPIInterface service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
-                    Call<VideoList> call = service.getTrailers(id, MoviesAPIInterface.apiKey);
-                    AsyncTrailerRequestHandler requestHandler = new AsyncTrailerRequestHandler(call, context, new AsyncEventListener() {
-                        @Override
-                        public void onSuccessTrailers(VideoList videos) {
-                            intent.putExtra("TRAILER_DATA", videos);
-                            intent.putExtra("MOVIE_DATA", list.get(index));
-
-                            context.startActivity(intent);
-                        }
-
-                        @Override
-                        public void onFailure(Exception e) {
-
-                        }
-
-                        @Override
-                        public void onSuccessMovies(List movies) {
-
-                        }
-                    });
-
-                    requestHandler.execute(call);
+                    service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
+                    getTrailers(id);
+                    getReviews(id);
                 }
             });
+        }
+
+        private void getReviews(int id) {
+            Call<Reviews> call = service.getReviews(id, MoviesAPIInterface.apiKey);
+            AsyncReviewRequestHandler requestHandler = new AsyncReviewRequestHandler(call, context, new AsyncEventListener() {
+                @Override
+                public void onSuccessTrailers(VideoList videos) {
+
+
+                }
+
+                @Override
+                public void onSuccessReviews(Reviews reviews) {
+                    Log.i("TESZT", "Reviews: " + reviews.toString());
+                    intent.putExtra("REVIEW_DATA", reviews);
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+
+                @Override
+                public void onSuccessMovies(List movies) {
+
+                }
+            });
+
+            requestHandler.execute(call);
+        }
+
+        private void getTrailers(int id) {
+            Call<VideoList> call = service.getTrailers(id, MoviesAPIInterface.apiKey);
+            AsyncTrailerRequestHandler requestHandler = new AsyncTrailerRequestHandler(call, context, new AsyncEventListener() {
+                @Override
+                public void onSuccessTrailers(VideoList videos) {
+                    intent.putExtra("TRAILER_DATA", videos);
+                    intent.putExtra("MOVIE_DATA", list.get(index));
+
+                    context.startActivity(intent);
+                }
+
+                @Override
+                public void onSuccessReviews(Reviews reviews) {
+
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+
+                }
+
+                @Override
+                public void onSuccessMovies(List movies) {
+
+                }
+            });
+
+            requestHandler.execute(call);
         }
     }
 }

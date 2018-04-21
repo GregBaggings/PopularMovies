@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.git.movies.popularmovies.R;
+import io.git.movies.popularmovies.fragments.ReviewListFragment;
 import io.git.movies.popularmovies.fragments.VideoListFragment;
 import io.git.movies.popularmovies.pojos.MovieDetails;
 import io.git.movies.popularmovies.pojos.VideoList;
@@ -50,9 +51,12 @@ public class DetailsActivity extends AppCompatActivity {
         bundle.putParcelable("trailers", videoDetails);
         VideoListFragment videoListFragment = new VideoListFragment();
         videoListFragment.setArguments(bundle);
+        ReviewListFragment reviewListFragment = new ReviewListFragment();
+        reviewListFragment.setArguments(bundle);
 
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.videoFragmentPlaceholder, videoListFragment);
+        ft.replace(R.id.reviewListFragmentPlaceholder, reviewListFragment);
         ft.commit();
 
         if (details != null) {

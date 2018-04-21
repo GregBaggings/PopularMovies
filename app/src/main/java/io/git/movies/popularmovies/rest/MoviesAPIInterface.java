@@ -2,6 +2,7 @@ package io.git.movies.popularmovies.rest;
 
 import io.git.movies.popularmovies.BuildConfig;
 import io.git.movies.popularmovies.pojos.MoviesList;
+import io.git.movies.popularmovies.pojos.Reviews;
 import io.git.movies.popularmovies.pojos.VideoList;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -20,4 +21,7 @@ public interface MoviesAPIInterface {
 
     @GET("https://api.themoviedb.org/3/movie/{id}/videos")
     Call<VideoList> getTrailers(@Path("id") int id, @Query("api_key") String apiKey);
+
+    @GET("https://api.themoviedb.org/3/movie/{movieId}/reviews")
+    Call<Reviews> getReviews(@Path("movieId") int id, @Query("api_key") String apiKey);
 }

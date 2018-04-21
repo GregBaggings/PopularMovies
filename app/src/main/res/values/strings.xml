@@ -12,6 +12,7 @@
     <string name="top_rated">Rating</string>
     <string name="most_popular">Popularity</string>
 
-    <string name="trailer_TV_default">Videos:</string>
+    <string name="trailer_TV_default">Trailers:</string>
+    <string name="reviews_TV_default">Reviews:</string>
 
 </resources>
