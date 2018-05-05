@@ -1,6 +1,7 @@
 package io.git.movies.popularmovies.activities;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -65,8 +66,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void setRecyclerViewDetails() {
         recyclerViewAdapter = new RecyclerViewAdapter(getApplicationContext(), list, recyclerView, loadingIndicator);
-        layoutManager = new GridLayoutManager(getApplicationContext(), 2);
-        recyclerView.setLayoutManager(layoutManager);
+
+        if (getBaseContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        }
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
     }
