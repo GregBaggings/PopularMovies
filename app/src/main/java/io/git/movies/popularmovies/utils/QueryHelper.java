@@ -1,9 +1,10 @@
-package io.git.movies.popularmovies.contentProvider;
-
+package io.git.movies.popularmovies.utils;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import io.git.movies.popularmovies.contentProvider.FavoritesDB;
 
 public class QueryHelper {
     private FavoritesDB dbHelper;

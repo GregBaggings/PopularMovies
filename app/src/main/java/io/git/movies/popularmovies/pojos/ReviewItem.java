@@ -1,6 +1,5 @@
 package io.git.movies.popularmovies.pojos;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 

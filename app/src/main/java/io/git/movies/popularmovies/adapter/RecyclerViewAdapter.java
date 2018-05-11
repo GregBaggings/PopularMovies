@@ -1,6 +1,5 @@
 package io.git.movies.popularmovies.adapter;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;

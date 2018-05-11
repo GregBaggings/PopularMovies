@@ -20,12 +20,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.contentProvider.FavoritesContract;
-import io.git.movies.popularmovies.contentProvider.QueryHelper;
 import io.git.movies.popularmovies.fragments.ReviewListFragment;
 import io.git.movies.popularmovies.fragments.VideoListFragment;
 import io.git.movies.popularmovies.pojos.MovieDetails;
 import io.git.movies.popularmovies.pojos.Reviews;
 import io.git.movies.popularmovies.pojos.VideoList;
+import io.git.movies.popularmovies.utils.QueryHelper;
 import io.git.movies.popularmovies.utils.URLBuilder;
 
 public class DetailsActivity extends AppCompatActivity {

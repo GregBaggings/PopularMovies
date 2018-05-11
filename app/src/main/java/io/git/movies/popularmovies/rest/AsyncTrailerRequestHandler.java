@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.List;
 
 import io.git.movies.popularmovies.pojos.VideoList;
 import retrofit2.Call;
@@ -13,7 +12,6 @@ import retrofit2.Response;
 
 public class AsyncTrailerRequestHandler extends AsyncTask<Call, Void, VideoList> {
 
-    private List list;
     private AsyncEventListener asyncEventListener;
     private Call<VideoList> myCall;
     private Context myContext;

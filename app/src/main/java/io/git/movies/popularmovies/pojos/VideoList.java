@@ -1,6 +1,5 @@
 package io.git.movies.popularmovies.pojos;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,7 +12,6 @@ public class VideoList implements Parcelable {
     private String id;
     @SerializedName("results")
     private List<VideoDetails> videoList;
-
 
     protected VideoList(Parcel in) {
         id = in.readString();

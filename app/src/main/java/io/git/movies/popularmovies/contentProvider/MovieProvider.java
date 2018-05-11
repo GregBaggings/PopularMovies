@@ -1,6 +1,5 @@
 package io.git.movies.popularmovies.contentProvider;
 
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;

@@ -1,6 +1,5 @@
 package io.git.movies.popularmovies.rest;
 
-
 import java.util.List;
 
 import io.git.movies.popularmovies.pojos.MoviesList;
