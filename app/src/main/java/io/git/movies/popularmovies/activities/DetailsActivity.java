@@ -3,9 +3,6 @@ package io.git.movies.popularmovies.activities;
 import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,7 +20,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.contentProvider.FavoritesContract;
-import io.git.movies.popularmovies.contentProvider.FavoritesDB;
+import io.git.movies.popularmovies.contentProvider.QueryHelper;
 import io.git.movies.popularmovies.fragments.ReviewListFragment;
 import io.git.movies.popularmovies.fragments.VideoListFragment;
 import io.git.movies.popularmovies.pojos.MovieDetails;
@@ -44,8 +41,13 @@ public class DetailsActivity extends AppCompatActivity {
     ImageView posterIV;
     @BindView(R.id.favorite)
     ImageButton favorite;
+
+    private QueryHelper queryHelper = new QueryHelper();
+    private ContentResolver resolver;
     private MovieDetails details;
-    private FavoritesDB dbHelper;
+    private Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
+    private int yellow = Color.YELLOW;
+    private int gray = Color.GRAY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        resolver = this.getContentResolver();
         setSupportActionBar(toolbar);
 
         populateMovieDetailsOnUI();
@@ -88,29 +91,17 @@ public class DetailsActivity extends AppCompatActivity {
             finish();
         }
 
-        int yellow = Color.YELLOW;
-        int gray = Color.GRAY;
-
-        if (dataCheck(FavoritesContract.FavoritesEntry.TABLE_NAME, FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, Integer.toString(details.getId()), getApplicationContext())) {
+        if (queryHelper.dataCheck(FavoritesContract.FavoritesEntry.TABLE_NAME, FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, Integer.toString(details.getId()), getApplicationContext())) {
             favorite.setColorFilter(yellow);
             favorite.setSelected(true);
         } else {
             favorite.setColorFilter(gray);
         }
-
-
     }
 
     @OnClick(R.id.favorite)
     public void addAndRemoveMovieFromFavorites() {
-        int yellow = Color.YELLOW;
-        int gray = Color.GRAY;
-
         if (!favorite.isSelected()) {
-            favorite.setColorFilter(yellow);
-
-            Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
-            ContentResolver resolver = this.getContentResolver();
             ContentValues values = new ContentValues();
 
             values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, details.getId());
@@ -118,32 +109,18 @@ public class DetailsActivity extends AppCompatActivity {
 
             resolver.insert(uri, values);
             favorite.setSelected(true);
+            favorite.setColorFilter(yellow);
+
             Toast.makeText(getApplicationContext(), "Added", Toast.LENGTH_SHORT).show();
-        }
-        else if (favorite.isSelected()) {
-            Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
-            ContentResolver resolver = this.getContentResolver();
+        } else if (favorite.isSelected()) {
             String selection = FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID + "=?";
             String[] selectionArgs = {String.valueOf(details.getId())};
 
             resolver.delete(uri, selection, selectionArgs);
+            favorite.setSelected(false);
             favorite.setColorFilter(gray);
 
             Toast.makeText(getApplicationContext(), "Removed", Toast.LENGTH_SHORT).show();
-            favorite.setSelected(false);
         }
-    }
-
-    public boolean dataCheck(String table, String rowAttribute, String fieldValue, Context context) {
-        dbHelper = new FavoritesDB(context);
-        final SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String Query = "Select * from " + table + " where " + rowAttribute + " = " + fieldValue;
-        Cursor cursor = db.rawQuery(Query, null);
-        if (cursor.getCount() <= 0) {
-            cursor.close();
-            return false;
-        }
-        cursor.close();
-        return true;
     }
 }
