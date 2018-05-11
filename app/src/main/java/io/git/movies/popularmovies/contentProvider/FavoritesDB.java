@@ -19,7 +19,10 @@ public class FavoritesDB extends SQLiteOpenHelper {
         final String SQL_CREATE_FAVORITES_TABLE = "CREATE TABLE " + FavoritesContract.FavoritesEntry.TABLE_NAME + " (" +
                 FavoritesContract.FavoritesEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 FavoritesContract.FavoritesEntry.COLUMN_MOVIE_NAME + " TEXT NOT NULL, " +
-                FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL " +
+                FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                FavoritesContract.FavoritesEntry.COLUMN_MOVIE_POSTER_URL + " TEXT NOT NULL, " +
+                FavoritesContract.FavoritesEntry.COLUMN_MOVIE_RELEASE_DATE + " INTEGER NOT NULL, " +
+                FavoritesContract.FavoritesEntry.COLUMN_MOVIE_RATING + " TEXT NOT NULL " +
                 "); ";
 
         db.execSQL(SQL_CREATE_FAVORITES_TABLE);

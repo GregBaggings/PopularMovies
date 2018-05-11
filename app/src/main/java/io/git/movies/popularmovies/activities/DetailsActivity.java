@@ -106,6 +106,10 @@ public class DetailsActivity extends AppCompatActivity {
 
             values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, details.getId());
             values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_NAME, details.getOriginalTitle());
+            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_POSTER_URL, details.getPosterPath());
+            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_RELEASE_DATE, details.getReleaseDate());
+            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_RATING, details.getVoteAverage());
+
 
             resolver.insert(uri, values);
             favorite.setSelected(true);

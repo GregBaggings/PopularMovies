@@ -14,5 +14,6 @@
 
     <string name="trailer_TV_default">Trailers:</string>
     <string name="reviews_TV_default">Reviews:</string>
+    <string name="favorites">Favorites</string>
 
 </resources>

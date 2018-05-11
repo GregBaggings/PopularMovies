@@ -2,7 +2,9 @@ package io.git.movies.popularmovies.activities;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.adapter.RecyclerViewAdapter;
+import io.git.movies.popularmovies.contentProvider.FavoritesContract;
 import io.git.movies.popularmovies.pojos.MovieDetails;
 import io.git.movies.popularmovies.pojos.MoviesList;
 import io.git.movies.popularmovies.pojos.Reviews;
@@ -34,7 +37,6 @@ import retrofit2.Call;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerViewAdapter recyclerViewAdapter;
-    private RecyclerView.LayoutManager layoutManager;
     private List<MovieDetails> list = new ArrayList<>();
     private MoviesAPIInterface service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
     @BindView(R.id.loading_indicator)
@@ -132,7 +134,36 @@ public class MainActivity extends AppCompatActivity {
             Call<MoviesList> call = service.getTopRatedMovies(MoviesAPIInterface.apiKey);
             getResponse(call);
         }
+        if (id == R.id.action_favorites) {
+            recyclerView.setAdapter(null);
+            getAndLoadFavorites();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void getAndLoadFavorites() {
+        List movies = new ArrayList();
+        Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
+        Cursor result = getContentResolver().query(uri, null, null, null, null);
+
+        list.clear();
+        loadingIndicator.setVisibility(View.VISIBLE);
+
+        while (result.moveToNext()) {
+            int id = result.getInt(result.getColumnIndex("movieId"));
+            String posterPath = result.getString(result.getColumnIndex("posterUrl"));
+            String title = result.getString(result.getColumnIndex("movieName"));
+            Double rating = result.getDouble(result.getColumnIndex("rating"));
+            String releaseDate = result.getString(result.getColumnIndex("releaseDate"));
+            movies.add(new MovieDetails(id, posterPath, title, rating, releaseDate));
+        }
+
+        result.close();
+
+        recyclerViewAdapter = new RecyclerViewAdapter(getApplicationContext(), movies, recyclerView, loadingIndicator);
+        recyclerView.setAdapter(recyclerViewAdapter);
+        list.addAll(movies);
+        loadingIndicator.setVisibility(View.INVISIBLE);
     }
 }
