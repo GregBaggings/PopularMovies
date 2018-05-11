@@ -115,7 +115,7 @@ public class DetailsActivity extends AppCompatActivity {
             favorite.setSelected(true);
             favorite.setColorFilter(yellow);
 
-            Toast.makeText(getApplicationContext(), "Added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_SHORT).show();
         } else if (favorite.isSelected()) {
             String selection = FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID + "=?";
             String[] selectionArgs = {String.valueOf(details.getId())};
@@ -124,7 +124,7 @@ public class DetailsActivity extends AppCompatActivity {
             favorite.setSelected(false);
             favorite.setColorFilter(gray);
 
-            Toast.makeText(getApplicationContext(), "Removed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Removed from Favorites", Toast.LENGTH_SHORT).show();
         }
     }
 }
