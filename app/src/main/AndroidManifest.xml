@@ -25,7 +25,13 @@
         <activity
             android:name=".activities.DetailsActivity"
             android:label="@string/title_activity_details"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <provider android:name="io.git.movies.popularmovies.contentProvider.MovieProvider"
+            android:authorities="io.git.movies.popularmovies"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

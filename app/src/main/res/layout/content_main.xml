@@ -8,23 +8,17 @@
     tools:context="io.git.movies.popularmovies.activities.MainActivity"
     tools:showIn="@layout/activity_main">
 
-
-    <GridLayout
+    <android.support.v4.widget.ContentLoadingProgressBar
+        android:id="@+id/loading_indicator"
+        style="?android:progressBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
 
-        <ProgressBar
-            android:id="@+id/loading_spinner"
-            style="?android:progressBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center" />
-
-        <GridView
-            android:id="@+id/postersGridView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:numColumns="2" />
-    </GridLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,87 +1,112 @@
 package io.git.movies.popularmovies.activities;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.git.movies.popularmovies.R;
-import io.git.movies.popularmovies.adapter.PosterAdapter;
+import io.git.movies.popularmovies.adapter.RecyclerViewAdapter;
+import io.git.movies.popularmovies.contentProvider.FavoritesContract;
 import io.git.movies.popularmovies.pojos.MovieDetails;
 import io.git.movies.popularmovies.pojos.MoviesList;
+import io.git.movies.popularmovies.pojos.Reviews;
+import io.git.movies.popularmovies.pojos.VideoList;
 import io.git.movies.popularmovies.rest.AsyncEventListener;
-import io.git.movies.popularmovies.rest.AsyncRequestHandler;
+import io.git.movies.popularmovies.rest.AsyncMoviesRequestHandler;
 import io.git.movies.popularmovies.rest.MoviesAPI;
 import io.git.movies.popularmovies.rest.MoviesAPIInterface;
 import retrofit2.Call;
 
 public class MainActivity extends AppCompatActivity {
-    private PosterAdapter adapter;
-    private GridView gridView;
+    private RecyclerViewAdapter recyclerViewAdapter;
     private List<MovieDetails> list = new ArrayList<>();
     private MoviesAPIInterface service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
-    private ProgressBar loadingIndicator;
+    @BindView(R.id.loading_indicator)
+    ProgressBar loadingIndicator;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
-
-        adapter = null;
-
-        loadingIndicator = findViewById(R.id.loading_spinner);
-        gridView = findViewById(R.id.postersGridView);
+        recyclerViewAdapter = null;
+        setRecyclerViewDetails();
 
         if (checkInternetConnection()) {
             loadingIndicator.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.INVISIBLE);
             Call<MoviesList> call = service.getPopularMovies(MoviesAPIInterface.apiKey);
             getResponse(call);
         } else {
             Toast.makeText(getApplicationContext(), "No internet connection!", Toast.LENGTH_LONG).show();
         }
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getBaseContext(), DetailsActivity.class);
-                intent.putExtra("MOVIE_DATA", list.get(position));
-                startActivity(intent);
-            }
-        });
     }
 
-    private boolean checkInternetConnection() {
+    private void setRecyclerViewDetails() {
+        recyclerViewAdapter = new RecyclerViewAdapter(getApplicationContext(), list, recyclerView, loadingIndicator);
+
+        if (getBaseContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        }
+
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(recyclerViewAdapter);
+    }
+
+    private boolean checkInternetConnection() throws NullPointerException {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo() != null;
     }
 
     private void getResponse(Call call) {
         list.clear();
-        AsyncRequestHandler requestHandler = new AsyncRequestHandler(call, getApplicationContext(), new AsyncEventListener() {
+        loadingIndicator.setVisibility(View.VISIBLE);
+        AsyncMoviesRequestHandler requestHandler = new AsyncMoviesRequestHandler(call, getApplicationContext(), new AsyncEventListener() {
+            @Override
+            public void onSuccessTrailers(VideoList videos) {
+
+            }
+
+            @Override
+            public void onSuccessReviews(Reviews reviews) {
+
+            }
+
             @Override
             public void onFailure(Exception e) {
 
             }
 
             @Override
-            public void onSuccess(List movies) {
-                adapter = new PosterAdapter(getApplicationContext(), movies);
-                gridView.setAdapter(adapter);
-                loadingIndicator.setVisibility(View.GONE);
+            public void onSuccessMovies(List movies) {
+                recyclerViewAdapter = new RecyclerViewAdapter(getApplicationContext(), movies, recyclerView, loadingIndicator);
+                recyclerView.setAdapter(recyclerViewAdapter);
                 list.addAll(movies);
             }
         });
@@ -100,18 +125,45 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_most_popular) {
-            gridView.setAdapter(null);
+            recyclerView.setAdapter(null);
             Call<MoviesList> call = service.getPopularMovies(MoviesAPIInterface.apiKey);
             getResponse(call);
         }
         if (id == R.id.action_top_rated) {
-            gridView.setAdapter(null);
+            recyclerView.setAdapter(null);
             Call<MoviesList> call = service.getTopRatedMovies(MoviesAPIInterface.apiKey);
             getResponse(call);
+        }
+        if (id == R.id.action_favorites) {
+            recyclerView.setAdapter(null);
+            getAndLoadFavorites();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void getAndLoadFavorites() {
+        List movies = new ArrayList();
+        Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
+        Cursor result = getContentResolver().query(uri, null, null, null, null);
+
+        list.clear();
+        loadingIndicator.setVisibility(View.VISIBLE);
+
+        while (result.moveToNext()) {
+            int id = result.getInt(result.getColumnIndex("movieId"));
+            String posterPath = result.getString(result.getColumnIndex("posterUrl"));
+            String title = result.getString(result.getColumnIndex("movieName"));
+            Double rating = result.getDouble(result.getColumnIndex("rating"));
+            String releaseDate = result.getString(result.getColumnIndex("releaseDate"));
+            movies.add(new MovieDetails(id, posterPath, title, rating, releaseDate));
+        }
+
+        result.close();
+
+        recyclerViewAdapter = new RecyclerViewAdapter(getApplicationContext(), movies, recyclerView, loadingIndicator);
+        recyclerView.setAdapter(recyclerViewAdapter);
+        list.addAll(movies);
+        loadingIndicator.setVisibility(View.INVISIBLE);
+    }
 }
-
-

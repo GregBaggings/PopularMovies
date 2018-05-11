@@ -8,7 +8,7 @@ public class URLBuilder {
 
     public String buildPosterURL(String pathFromResponse) {
         String posterURL = baseURL + size + pathFromResponse;
-        Log.i("URLBuilder", "The poster url is " + posterURL);
+        Log.i("TESZT", "The poster url is " + posterURL);
         return posterURL;
     }
 }

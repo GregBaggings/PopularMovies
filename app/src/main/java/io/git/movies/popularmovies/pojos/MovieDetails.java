@@ -66,6 +66,14 @@ public class MovieDetails implements Parcelable {
         }
     };
 
+    public MovieDetails(int id, String posterPath, String title, Double rating, String releaseDate) {
+        this.id = id;
+        this.posterPath = posterPath;
+        this.title = title;
+        this.popularity = rating;
+        this.releaseDate = releaseDate;
+    }
+
     public int getVoteCount() {
         return voteCount;
     }
