@@ -126,17 +126,20 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_most_popular) {
             recyclerView.setAdapter(null);
+            setTitle("Popular Movies");
             Call<MoviesList> call = service.getPopularMovies(MoviesAPIInterface.apiKey);
             getResponse(call);
         }
         if (id == R.id.action_top_rated) {
             recyclerView.setAdapter(null);
+            setTitle("Top Rated Movies");
             Call<MoviesList> call = service.getTopRatedMovies(MoviesAPIInterface.apiKey);
             getResponse(call);
         }
         if (id == R.id.action_favorites) {
             recyclerView.setAdapter(null);
             getAndLoadFavorites();
+            setTitle("Favorites");
         }
 
         return super.onOptionsItemSelected(item);
