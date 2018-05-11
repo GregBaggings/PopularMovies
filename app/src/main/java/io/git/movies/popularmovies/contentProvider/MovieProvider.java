@@ -110,9 +110,8 @@ public class MovieProvider extends ContentProvider {
 
 
         switch (match) {
-            case FAVORITE_WITH_ID:
-                String id = uri.getPathSegments().get(1);
-                favoriteDeleted = db.delete(FavoritesContract.FavoritesEntry.TABLE_NAME, "_id=?", new String[]{id});
+            case FAVORITE:
+                favoriteDeleted = db.delete(FavoritesContract.FavoritesEntry.TABLE_NAME, "movieId=?", strings);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

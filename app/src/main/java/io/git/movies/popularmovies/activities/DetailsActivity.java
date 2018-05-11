@@ -3,7 +3,6 @@ package io.git.movies.popularmovies.activities;
 import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,7 +41,6 @@ public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.favorite)
     ImageButton favorite;
     private MovieDetails details;
-    private SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
