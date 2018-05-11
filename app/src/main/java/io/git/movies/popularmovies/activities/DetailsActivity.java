@@ -3,6 +3,9 @@ package io.git.movies.popularmovies.activities;
 import android.app.FragmentTransaction;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.git.movies.popularmovies.R;
 import io.git.movies.popularmovies.contentProvider.FavoritesContract;
+import io.git.movies.popularmovies.contentProvider.FavoritesDB;
 import io.git.movies.popularmovies.fragments.ReviewListFragment;
 import io.git.movies.popularmovies.fragments.VideoListFragment;
 import io.git.movies.popularmovies.pojos.MovieDetails;
@@ -41,6 +45,7 @@ public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.favorite)
     ImageButton favorite;
     private MovieDetails details;
+    private FavoritesDB dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +88,17 @@ public class DetailsActivity extends AppCompatActivity {
             finish();
         }
 
-        //TODO Add check to set the correct star state based on if the movie is in the content provider or not. (Query the io.git.movies.popularmovies.contentProvider)
+        int yellow = Color.YELLOW;
+        int gray = Color.GRAY;
+
+        if (dataCheck(FavoritesContract.FavoritesEntry.TABLE_NAME, FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, Integer.toString(details.getId()), getApplicationContext())) {
+            favorite.setColorFilter(yellow);
+            favorite.setSelected(true);
+        } else {
+            favorite.setColorFilter(gray);
+        }
+
+
     }
 
     @OnClick(R.id.favorite)
@@ -91,9 +106,7 @@ public class DetailsActivity extends AppCompatActivity {
         int yellow = Color.YELLOW;
         int gray = Color.GRAY;
 
-        favorite.setSelected(!favorite.isSelected());
-
-        if (favorite.isSelected()) {
+        if (!favorite.isSelected()) {
             favorite.setColorFilter(yellow);
 
             Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
@@ -104,9 +117,10 @@ public class DetailsActivity extends AppCompatActivity {
             values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_NAME, details.getOriginalTitle());
 
             resolver.insert(uri, values);
-
+            favorite.setSelected(true);
             Toast.makeText(getApplicationContext(), "Added", Toast.LENGTH_SHORT).show();
-        } else {
+        }
+        else if (favorite.isSelected()) {
             Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
             ContentResolver resolver = this.getContentResolver();
             String selection = FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID + "=?";
@@ -116,6 +130,20 @@ public class DetailsActivity extends AppCompatActivity {
             favorite.setColorFilter(gray);
 
             Toast.makeText(getApplicationContext(), "Removed", Toast.LENGTH_SHORT).show();
+            favorite.setSelected(false);
         }
+    }
+
+    public boolean dataCheck(String table, String rowAttribute, String fieldValue, Context context) {
+        dbHelper = new FavoritesDB(context);
+        final SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String Query = "Select * from " + table + " where " + rowAttribute + " = " + fieldValue;
+        Cursor cursor = db.rawQuery(Query, null);
+        if (cursor.getCount() <= 0) {
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
     }
 }
