@@ -28,6 +28,8 @@ import io.git.movies.popularmovies.pojos.VideoList;
 import io.git.movies.popularmovies.utils.QueryHelper;
 import io.git.movies.popularmovies.utils.URLBuilder;
 
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+
 public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.titleTV)
     TextView titleTV;
@@ -55,6 +57,8 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setRequestedOrientation(SCREEN_ORIENTATION_PORTRAIT);
 
         if (savedInstanceState != null) {
             movieDetails = savedInstanceState.getParcelable("movieDetails");
