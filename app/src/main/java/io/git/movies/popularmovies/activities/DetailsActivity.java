@@ -45,7 +45,9 @@ public class DetailsActivity extends AppCompatActivity {
 
     private QueryHelper queryHelper = new QueryHelper();
     private ContentResolver resolver;
-    private MovieDetails details;
+    private MovieDetails movieDetails;
+    private VideoList videoDetails;
+    private Reviews reviews;
     private Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
     private int yellow = Color.YELLOW;
     private int gray = Color.GRAY;
@@ -53,6 +55,12 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            movieDetails = savedInstanceState.getParcelable("movieDetails");
+            videoDetails = savedInstanceState.getParcelable("videoDetails");
+            reviews = savedInstanceState.getParcelable("reviews");
+        }
 
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
@@ -64,21 +72,18 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
-        //TODO complete this and the restore
+        outState.putParcelable("movieDetails", movieDetails);
+        outState.putParcelable("videoDetails", videoDetails);
+        outState.putParcelable("reviews", reviews);
         super.onSaveInstanceState(outState);
     }
 
     private void populateMovieDetailsOnUI() {
         URLBuilder urlBuilder = new URLBuilder();
-        details = getIntent().getExtras().getParcelable("MOVIE_DATA");
-        VideoList videoDetails = getIntent().getExtras().getParcelable("TRAILER_DATA");
-        Reviews reviews = getIntent().getExtras().getParcelable("REVIEW_DATA");
+        movieDetails = getIntent().getExtras().getParcelable("MOVIE_DATA");
+        videoDetails = getIntent().getExtras().getParcelable("TRAILER_DATA");
+        reviews = getIntent().getExtras().getParcelable("REVIEW_DATA");
 
 
         bundle.putParcelable("trailers", videoDetails);
@@ -93,18 +98,18 @@ public class DetailsActivity extends AppCompatActivity {
         ft.replace(R.id.reviewListFragmentPlaceholder, reviewListFragment);
         ft.commit();
 
-        if (details != null) {
-            titleTV.setText(getText(R.string.title_tv_default) + details.getTitle());
-            overviewTV.setText(getText(R.string.plot_tv_default) + details.getOverview());
-            releaseDateTV.setText(getText(R.string.release_date_tv_default) + details.getReleaseDate());
-            avgTV.setText(getText(R.string.avg_tv_default) + Double.toString(details.getVoteAverage()));
-            Picasso.with(this).load(urlBuilder.buildPosterURL(details.getPosterPath())).into(posterIV);
+        if (movieDetails != null) {
+            titleTV.setText(getText(R.string.title_tv_default) + movieDetails.getTitle());
+            overviewTV.setText(getText(R.string.plot_tv_default) + movieDetails.getOverview());
+            releaseDateTV.setText(getText(R.string.release_date_tv_default) + movieDetails.getReleaseDate());
+            avgTV.setText(getText(R.string.avg_tv_default) + Double.toString(movieDetails.getVoteAverage()));
+            Picasso.with(this).load(urlBuilder.buildPosterURL(movieDetails.getPosterPath())).into(posterIV);
         } else {
             Toast.makeText(this, "No data to present.", Toast.LENGTH_LONG).show();
             finish();
         }
 
-        if (queryHelper.dataCheck(FavoritesContract.FavoritesEntry.TABLE_NAME, FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, Integer.toString(details.getId()), getApplicationContext())) {
+        if (queryHelper.dataCheck(FavoritesContract.FavoritesEntry.TABLE_NAME, FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, Integer.toString(movieDetails.getId()), getApplicationContext())) {
             favorite.setColorFilter(yellow);
             favorite.setSelected(true);
         } else {
@@ -117,11 +122,11 @@ public class DetailsActivity extends AppCompatActivity {
         if (!favorite.isSelected()) {
             ContentValues values = new ContentValues();
 
-            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, details.getId());
-            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_NAME, details.getOriginalTitle());
-            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_POSTER_URL, details.getPosterPath());
-            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_RELEASE_DATE, details.getReleaseDate());
-            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_RATING, details.getVoteAverage());
+            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID, movieDetails.getId());
+            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_NAME, movieDetails.getOriginalTitle());
+            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_POSTER_URL, movieDetails.getPosterPath());
+            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_RELEASE_DATE, movieDetails.getReleaseDate());
+            values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_RATING, movieDetails.getVoteAverage());
 
 
             resolver.insert(uri, values);
@@ -131,7 +136,7 @@ public class DetailsActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Added to Favorites", Toast.LENGTH_SHORT).show();
         } else if (favorite.isSelected()) {
             String selection = FavoritesContract.FavoritesEntry.COLUMN_MOVIE_ID + "=?";
-            String[] selectionArgs = {String.valueOf(details.getId())};
+            String[] selectionArgs = {String.valueOf(movieDetails.getId())};
 
             resolver.delete(uri, selection, selectionArgs);
             favorite.setSelected(false);
