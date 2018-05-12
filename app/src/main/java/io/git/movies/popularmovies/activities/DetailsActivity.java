@@ -28,8 +28,6 @@ import io.git.movies.popularmovies.pojos.VideoList;
 import io.git.movies.popularmovies.utils.QueryHelper;
 import io.git.movies.popularmovies.utils.URLBuilder;
 
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-
 public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.titleTV)
     TextView titleTV;
@@ -58,14 +56,6 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setRequestedOrientation(SCREEN_ORIENTATION_PORTRAIT);
-
-        if (savedInstanceState != null) {
-            movieDetails = savedInstanceState.getParcelable("movieDetails");
-            videoDetails = savedInstanceState.getParcelable("videoDetails");
-            reviews = savedInstanceState.getParcelable("reviews");
-        }
-
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -75,20 +65,11 @@ public class DetailsActivity extends AppCompatActivity {
         populateMovieDetailsOnUI();
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable("movieDetails", movieDetails);
-        outState.putParcelable("videoDetails", videoDetails);
-        outState.putParcelable("reviews", reviews);
-        super.onSaveInstanceState(outState);
-    }
-
     private void populateMovieDetailsOnUI() {
         URLBuilder urlBuilder = new URLBuilder();
         movieDetails = getIntent().getExtras().getParcelable("MOVIE_DATA");
         videoDetails = getIntent().getExtras().getParcelable("TRAILER_DATA");
         reviews = getIntent().getExtras().getParcelable("REVIEW_DATA");
-
 
         bundle.putParcelable("trailers", videoDetails);
         bundle.putParcelable("reviews", reviews);
@@ -131,7 +112,6 @@ public class DetailsActivity extends AppCompatActivity {
             values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_POSTER_URL, movieDetails.getPosterPath());
             values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_RELEASE_DATE, movieDetails.getReleaseDate());
             values.put(FavoritesContract.FavoritesEntry.COLUMN_MOVIE_RATING, movieDetails.getVoteAverage());
-
 
             resolver.insert(uri, values);
             favorite.setSelected(true);

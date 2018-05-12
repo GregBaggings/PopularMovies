@@ -2,7 +2,6 @@ package io.git.movies.popularmovies.fragments;
 
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +18,6 @@ public class ReviewListFragment extends ListFragment {
 
     private List reviewComments = new ArrayList<>();
     private Reviews reviews;
-    private Parcelable listViewState;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -39,20 +37,8 @@ public class ReviewListFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            listViewState = savedInstanceState.getParcelable("LIST_STATE");
-        }
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, reviewComments);
         setListAdapter(adapter);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle state) {
-        super.onSaveInstanceState(state);
-        listViewState = getListView().onSaveInstanceState();
-        state.putParcelable("LIST_STATE", listViewState);
     }
 
     public List<String> getReviewItems(Reviews reviews) {

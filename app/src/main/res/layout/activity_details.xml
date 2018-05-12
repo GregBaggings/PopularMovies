@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.DetailsActivity">
+    tools:context=".activities.DetailsActivity"
+    android:id="@+id/scrollView">
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -127,7 +128,7 @@
         <FrameLayout
             android:id="@+id/videoFragmentPlaceholder"
             android:layout_width="0dp"
-            android:layout_height="300dp"
+            android:layout_height="200dp"
             android:layout_marginBottom="20dp"
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
@@ -152,7 +153,7 @@
         <FrameLayout
             android:id="@+id/reviewListFragmentPlaceholder"
             android:layout_width="0dp"
-            android:layout_height="400dp"
+            android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
