@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerViewAdapter recyclerViewAdapter;
     private List<MovieDetails> list = new ArrayList<>();
     private MoviesAPIInterface service = MoviesAPI.getRetrofit().create(MoviesAPIInterface.class);
+    private Parcelable recyclerViewState;
+
     @BindView(R.id.loading_indicator)
     ProgressBar loadingIndicator;
     @BindView(R.id.recycler_view)
@@ -49,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            recyclerViewState = savedInstanceState.getParcelable("MOVIE_LIST_STATE");
+        }
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -64,6 +72,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "No internet connection!", Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("MOVIE_LIST_STATE", recyclerView.getLayoutManager().onSaveInstanceState());
     }
 
     private void setRecyclerViewDetails() {
@@ -107,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSuccessMovies(List movies) {
                 recyclerViewAdapter = new RecyclerViewAdapter(getApplicationContext(), movies, recyclerView, loadingIndicator);
                 recyclerView.setAdapter(recyclerViewAdapter);
+                recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
                 list.addAll(movies);
             }
         });
@@ -166,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerViewAdapter = new RecyclerViewAdapter(getApplicationContext(), movies, recyclerView, loadingIndicator);
         recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
         list.addAll(movies);
         loadingIndicator.setVisibility(View.INVISIBLE);
     }

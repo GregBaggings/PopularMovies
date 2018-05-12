@@ -41,6 +41,7 @@ public class DetailsActivity extends AppCompatActivity {
     ImageView posterIV;
     @BindView(R.id.favorite)
     ImageButton favorite;
+    Bundle bundle = new Bundle();
 
     private QueryHelper queryHelper = new QueryHelper();
     private ContentResolver resolver;
@@ -52,6 +53,7 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -61,13 +63,24 @@ public class DetailsActivity extends AppCompatActivity {
         populateMovieDetailsOnUI();
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        //TODO complete this and the restore
+        super.onSaveInstanceState(outState);
+    }
+
     private void populateMovieDetailsOnUI() {
         URLBuilder urlBuilder = new URLBuilder();
         details = getIntent().getExtras().getParcelable("MOVIE_DATA");
         VideoList videoDetails = getIntent().getExtras().getParcelable("TRAILER_DATA");
         Reviews reviews = getIntent().getExtras().getParcelable("REVIEW_DATA");
 
-        Bundle bundle = new Bundle();
+
         bundle.putParcelable("trailers", videoDetails);
         bundle.putParcelable("reviews", reviews);
         VideoListFragment videoListFragment = new VideoListFragment();
